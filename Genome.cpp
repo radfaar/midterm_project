@@ -196,7 +196,7 @@ public:
 
 
 
-class cell{
+class Cell{
     public:
     
     vector <Genome> myVec;
@@ -211,7 +211,7 @@ class cell{
         for(int i = 0 ; i< myVec.size() ; i++){
             if(myVec[i].DNA1== " " && myVec[i].DNA2== ""){
                 counter++;
-                myVec[i].getDNA();
+                
             }
         }
         cout<< counter;
@@ -384,12 +384,12 @@ int main(){
     genomes.push_back(g1);
     genomes.push_back(g2);
     
-    vector<cell> cells;
+    vector<Cell> cells;
 
     while(true){
         int type;
         cout << endl << "________________" << endl << "Which entity do you want to work with?" << endl;
-        cout << "1) Genome" << endl << "2) Cell" << endl;
+        cout << "1) Genome" << endl << "2) Cell" << endl << "3) animal" << endl;
         cin >> type;
         
         if (type == 1){
@@ -468,6 +468,130 @@ int main(){
         }
 
         if (type == 2) {
+            int _action;
+            cout << "what do you want to do?"<< endl;
+            cout << "1) create a cell" << endl;
+            cout << "2) save the number of chromosomes and the DNAs " << endl;
+            cout << "3) delete the cell using cell_death " << endl;
+            cout << "4) make a huge modify in chromosome (S1,n,S2,m) "<< endl;
+            cout << "5) replace N nuclide of the Mth chromosome with another nuclide (A,C,n,m)" <<endl;
+            cout << "6) make a diverse jump in the Nth chromosome (S1,n)" << endl;
+            cout << "7) find complement palindromes in chromosome" << endl;
+            cin >> _action;
+
+
+            if(_action == 1){
+                
+
+                    Cell cell;
+                    int genomeindex;
+                    cout<< "Please enter your genome index" << endl;
+                    cin>> genomeindex;
+                    cell.push(genomes[genomeindex]);
+                    if(genomeindex == -1)
+                    break;
+
+                    cout<< "ID of new cell is: " << cells.size()-1 << endl;
+
+     
+                
+            }
+
+            if(_action == 2){
+                
+                int cellindex;
+                cout << "which cell? enter frome 0 to " << cells.size()-1 << endl;
+                cin>> cellindex;
+                cells[cellindex].number_of_chromosomes();
+
+                if(cells.size() == 0){
+                    cout<< "No cell has been created"<< endl;
+                    continue;
+                }
+
+            }
+
+            if(_action == 3){
+
+                int cellindex;
+                cout << "which cell? enter frome 0 to " << cells.size()-1 << endl;
+                cin>> cellindex;
+                cells[cellindex].cell_death();
+
+                if(cells.size() == 0){
+                    cout<< "No cell has been created"<< endl;
+                    continue;
+                }                
+
+
+            }
+
+            if(_action == 4){
+                string S1;
+                string S2;
+                int n,m,cellindex;
+                cout<<"which cell? enter frome 0 to " << cells.size()-1 << endl;
+                cin>> cellindex;
+                cout << "so you are going to make a huge change" << endl;
+                cout << "enter S1 (sth to replace): "<< endl;
+                getline(cin,S1);
+                cout << "enter S2 (sth that is gonna be replace with): "<< endl;
+                getline(cin,S2);
+                cout << "enter n (number of first chromosome): "<< endl;
+                cin >> n;
+                cout << "enter m (number of second chromosome): "<< endl;
+                cin >> m;
+                cells[cellindex].hugeJump(S1,n,S2,m);
+
+
+
+            }
+
+            if(_action == 5){
+                char chartoreplace, charreplacement;
+                int n,m,cellindex;              
+                cout << "OK! you are making small change in your cell."<< endl;
+                cout<<"which cell? enter frome 0 to " << cells.size()-1 << endl;
+                cin>> cellindex;       
+                cout << "enter the nuclide to replace: "<< endl;
+                cin.get(chartoreplace);
+                cout << "enter the nuclide to be replaced with: " << endl;
+                cin.get(charreplacement);
+                cout<< "enter the number of nuclides to replace: " << endl;
+                cin >> n;
+                cout<< "enter the index of chromosome: " << endl;
+                cin >> m;
+
+                cells[cellindex].replaceChar(chartoreplace,charreplacement,n,m);
+
+
+            }
+
+            if(_action == 6){
+                int cellindex,n;
+                string s;
+                cout <<"which cell? enter frome 0 to " << cells.size()-1 << endl;
+                cin >> cellindex;
+
+                cout <<"enter sth that you wanna inverse it: " << endl;
+                getline(cin,s);
+                cout <<"enter the number of chromosome: " << endl;
+                cin >> n;
+
+
+                cells[cellindex].diverse_jump(s,n);
+
+            }
+
+            if(_action == 7){
+                int cellindex,genomeindex;
+                cout <<"which cell? enter from 0 to " << cells.size()-1 << endl;
+                cin >> cellindex;
+                cout <<  "which chromosome? enter a number from 0 to " << genomes.size()-1 <<  endl;
+                cin >> genomeindex;
+                cells[cellindex].find_palindrome(cells[cellindex].myVec[genomeindex]);
+
+            }
 
         }
 
