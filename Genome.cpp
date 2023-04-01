@@ -351,20 +351,28 @@ class cell{
  };
 
 
+class Animal {
+    // returns a number, in percentage, between 0 and 100 
+    int Similarity(Animal other) {
 
+    }
+    // produces a new animal similar to this and the given one
+    Animal Produce(Animal other){
+
+    }
+    // overrides cell's cell_death method
+    void cell_death(){
+    }
+
+}
 
 
 int main(){
-    cell c;
-    Genome g1("AATTCC","TTAAGG","");
-    Genome g2("ATATCT","TATAGT","");
-    Genome g3("CGATC","GCTAG","");
-    c.push(g1);
-    c.push(g2);
-    c.push(g3);
+    // use the given classes to create an acceptable menu 
+    // this menu shoud:
+    // 1. create a new genome and allows us to run genome's methods
+    // 2. create a new cell and run cell's methods
+    // 3. create a new animal and runs the animals methods
 
-    c.hugeJump("AA",0,"CG",2);
-    cout << c.myVec[0].DNA1 << " | " << c.myVec[0].DNA2 << endl;
-    cout << c.myVec[2].DNA1 << " | " << c.myVec[2].DNA2 << endl;
-    return 0;
+
 }
