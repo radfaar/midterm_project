@@ -15,6 +15,8 @@ public:
         RNA = _RNA;
     }
 
+    Genome(){}
+
     //recieving RNA
     void getRNA(){
         cout << RNA << endl;
@@ -25,6 +27,13 @@ public:
         cout << DNA1 << endl;
         cout<<  DNA2 << endl;
        
+    }
+
+    void print() {
+        cout << "RNA: "<< endl;
+        getRNA();
+        cout << "DNA :" << endl;
+        getDNA();
     }
 
     //RNA or DNA supplement
@@ -109,22 +118,20 @@ public:
      void replaceChar(char charToReplace, char charReplacement, int n){
         
         int counter=0;
-        for(int i = 0; i < DNA1.size() && i<DNA2.size(); i++){
+        for(int i = 0; i < DNA1.size(); i++){
            
             if(DNA1[i] == charToReplace){
                 DNA1[i] = charReplacement;
                 counter++;
-                }
-            if(DNA2[i] == charToReplace)    
-               { DNA2[i] = charReplacement;
-                counter++;
-                }
-                if(counter == n){
-                    break;
-                }
-            
             }
-            correctDNA();
+            if(counter == n){
+                break;
+            }
+            
+        }
+
+        cout << "Debug" << DNA1 << endl;
+        correctDNA();
             
           
 
@@ -167,24 +174,17 @@ public:
 
 
     void diverse_jump(string s1){
+        size_t in_rna = RNA.find(s1);
+        if(in_rna != string::npos){
+            RNA.replace(in_rna,s1.length(), mokamel(s1));
+        }
 
-         if(RNA.find(s1)!= string::npos){
-            mokamel(s1);
-            cout<< RNA;
+        size_t in_dna = DNA1.find(s1);
+        if(in_dna != string::npos){
+            DNA1.replace(in_dna,s1.length(), mokamel(s1));
+        }
 
-         }
-
-
-         if(DNA1.find(s1) != string::npos){
-            mokamel(s1);
-
-         }
-
-         if(DNA2.find(s1) != string::npos){
-            mokamel(s1);
-         }
-
-         correctDNA();
+        correctDNA();
 
     }
     
@@ -354,17 +354,20 @@ class cell{
 class Animal {
     // returns a number, in percentage, between 0 and 100 
     int Similarity(Animal other) {
-
+        return 0;
     }
     // produces a new animal similar to this and the given one
     Animal Produce(Animal other){
-
+        return other;
     }
     // overrides cell's cell_death method
     void cell_death(){
     }
 
-}
+};
+
+
+
 
 
 int main(){
@@ -374,5 +377,103 @@ int main(){
     // 2. create a new cell and run cell's methods
     // 3. create a new animal and runs the animals methods
 
+    vector<Genome> genomes;
+    // add dummy data for ease of testing
+    Genome g1("AAATTT","TTTAAA","AAATTT");
+    Genome g2("CGCGCA","GCGCGT","");
+    genomes.push_back(g1);
+    genomes.push_back(g2);
+    
+    vector<cell> cells;
 
+    while(true){
+        int type;
+        cout << endl << "________________" << endl << "Which entity do you want to work with?" << endl;
+        cout << "1) Genome" << endl << "2) Cell" << endl;
+        cin >> type;
+        
+        if (type == 1){
+            int action;
+            cout << "What do you want me to do?" << endl;
+            cout << "1) Create a new genome" << endl;
+            cout << "2) Make a DNA by RNA" << endl;
+            cout << "3) Make a small jump (A, C, n)" << endl;
+            cout << "4) Make a huge jump (S1, S2)" << endl;
+            cout << "5) Make a diverse jump (S1)" << endl;
+            cin >> action;
+
+            if(action == 1){
+                string dna1,dna2,rna;
+                cout << "Enter the RNA: (can be empty if you want to enter DNA only)" << endl;
+                cin >> rna;
+                cout << "Enter the DNA:" << endl;
+                cin >> dna1;
+                cout << "Enter the DNA's complement:" << endl;
+                cin >> dna2;
+                Genome genome(dna1,dna2,rna);
+                genomes.push_back(genome);
+                cout << ">> Your new genome's index is: " << genomes.size() -1 << endl << endl;;
+            }
+
+            if(action == 2){
+                string rna;
+                cout << "Enter the RNA:" << endl;
+                cin >> rna;
+                Genome genome;
+                cout << genome.makeDNA(rna) << endl;
+            }
+
+            if(genomes.size() == 0){
+                cout << "No genome has been created!" << endl;
+                continue;
+            }
+
+            int genomeIndex;
+            cout << "Which genome? from 0 to " << genomes.size()-1 << endl;
+            cin >> genomeIndex;
+
+            if(action == 3){
+                char A, C;
+                int N;
+                cout << "Enter the A: " << endl;
+                cin >> A;
+                cout << "Enter the C: " << endl;
+                cin >> C;
+                cout << "Enter the N: " << endl;
+                cin >> N;
+
+                genomes[genomeIndex].replaceChar(A, C, N);
+                genomes[genomeIndex].print();
+
+            }
+
+            if(action == 4){
+                string s1,s2;
+                cout << "Enter s1: "<< endl;
+                cin >> s1;
+                cout << "Enter s2: "<< endl;
+                cin >> s2;
+                genomes[genomeIndex].hugejump(s1, s2);
+                genomes[genomeIndex].print();
+            }
+
+            if (action == 5) {
+                string s1;
+                cout << "Enter s1: "<< endl;
+                cin >> s1;
+                genomes[genomeIndex].diverse_jump(s1);
+                genomes[genomeIndex].print();
+            }
+
+        }
+
+        if (type == 2) {
+
+        }
+
+
+    }
+
+
+    return 0;
 }
