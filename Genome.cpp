@@ -32,8 +32,10 @@ public:
     void print() {
         cout << "RNA: "<< endl;
         getRNA();
+        cout<< "_____" <<endl;
         cout << "DNA :" << endl;
         getDNA();
+        cout<< "_____" <<endl;
     }
 
     //RNA or DNA supplement
@@ -209,7 +211,7 @@ class Cell{
 
     void number_of_chromosomes(){
         for(int i = 0 ; i< myVec.size() ; i++){
-            if(myVec[i].DNA1== " " && myVec[i].DNA2== ""){
+            if(myVec[i].DNA1!= " " && myVec[i].DNA2!= ""){
                 counter++;
                 
             }
@@ -244,7 +246,7 @@ class Cell{
         delete this;
        }
 
-
+        break;
        }
     }
 
@@ -261,8 +263,14 @@ class Cell{
         string ms1 = myVec[n].mokamel(s1);
         string ms2 = myVec[m].mokamel(s2);
 
-        myVec[n].DNA2.replace(indexN,s1.length(),ms2);
-        myVec[m].DNA2.replace(indexM,s2.length(),ms1);
+      myVec[n].DNA2.replace(indexN,s1.length(),ms2);
+      myVec[m].DNA2.replace(indexM,s2.length(),ms1);
+
+      myVec[n].getDNA();
+      myVec[m].getDNA();
+        
+
+
     }
 
 
@@ -270,15 +278,12 @@ class Cell{
 
         int counter=0;
         for(int i = 0; i< myVec.size(); i++){
-           for(int j=0 ;j < myVec[m].DNA1[i] && myVec[m].DNA2[i] ; j++ ){
+           for(int j=0 ;j < myVec[m].DNA1[i] ; j++ ){
             if(myVec[m].DNA1[i] == charToReplace){
                 myVec[m].DNA1[i] = charReplacement;
                 counter++;
                 }
-            if(myVec[m].DNA2[i] == charToReplace)    
-               { myVec[m].DNA2[i] = charReplacement;
-                counter++;
-                }
+
                 if(counter == n){
                     break;
                 }
@@ -380,7 +385,7 @@ int main(){
     vector<Genome> genomes;
     // add dummy data for ease of testing
     Genome g1("AAATTT","TTTAAA","AAATTT");
-    Genome g2("CGCGCA","GCGCGT","");
+    Genome g2("CGCGCA","GCGCGT","CGCGCA");
     genomes.push_back(g1);
     genomes.push_back(g2);
     
@@ -481,19 +486,23 @@ int main(){
 
 
             if(_action == 1){
-                
-
-                    Cell cell;
                     int genomeindex;
+                    Cell cell;
+                    while(true){
+                    
                     cout<< "Please enter your genome index" << endl;
                     cin>> genomeindex;
+                    if(genomeindex == -1){
+                        break;
+                    }
                     cell.push(genomes[genomeindex]);
-                    if(genomeindex == -1)
-                    break;
+                    cout<< "Genome #" << genomeindex << " added to cell. add another ID or press -1 to finish the process"<< endl;
 
+                    }
+                    cells.push_back(cell);
+                    
                     cout<< "ID of new cell is: " << cells.size()-1 << endl;
 
-     
                 
             }
 
@@ -534,13 +543,15 @@ int main(){
                 cin>> cellindex;
                 cout << "so you are going to make a huge change" << endl;
                 cout << "enter S1 (sth to replace): "<< endl;
-                getline(cin,S1);
+                cin >> S1;
                 cout << "enter S2 (sth that is gonna be replace with): "<< endl;
-                getline(cin,S2);
+                cin >> S2;
                 cout << "enter n (number of first chromosome): "<< endl;
                 cin >> n;
+                cells[cellindex].myVec[n].print();
                 cout << "enter m (number of second chromosome): "<< endl;
                 cin >> m;
+                cells[cellindex].myVec[m].print();
                 cells[cellindex].hugeJump(S1,n,S2,m);
 
 
@@ -554,13 +565,16 @@ int main(){
                 cout<<"which cell? enter frome 0 to " << cells.size()-1 << endl;
                 cin>> cellindex;       
                 cout << "enter the nuclide to replace: "<< endl;
-                cin.get(chartoreplace);
+                cin >> chartoreplace;
                 cout << "enter the nuclide to be replaced with: " << endl;
-                cin.get(charreplacement);
+                cin >> charreplacement;
                 cout<< "enter the number of nuclides to replace: " << endl;
                 cin >> n;
                 cout<< "enter the index of chromosome: " << endl;
                 cin >> m;
+                
+
+
 
                 cells[cellindex].replaceChar(chartoreplace,charreplacement,n,m);
 
