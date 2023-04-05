@@ -1,6 +1,9 @@
 
 #include <iostream>
 #include <vector>
+#include <algorithm>
+#include <random>
+
 using namespace std;
 
 class Genome{
@@ -234,13 +237,21 @@ class Cell{
        int counter1=0;
        int counter2=0;
 
-       while( finder1 and finder2 != string :: npos){
-        counter1++;
-       }
+         while(finder1 != string::npos && finder2 != string::npos) {
+                
+                finder1 = str.find('A', finder1+1);
+                finder2 = str.find('T', finder2+1);
 
-       while( finder3 and finder4 != string :: npos){
-        counter2++;
-       }
+                counter1++;
+            }
+
+         while(finder3 != string::npos && finder4 != string::npos) {
+                
+                finder3 = str.find('C', finder3+1);
+                finder4 = str.find('G', finder4+1);
+
+                counter2++;
+            }
 
        if(counter1 > (counter2 *3)){
         delete this;
@@ -355,32 +366,133 @@ class Cell{
 
  };
 
+class Animal : public Cell{
+    
+    double similarity(Animal& another){
+        int similar_chromosomes = 0;
+        int maximum = max(myVec.size() , another.myVec.size());
+        int minimum = min(myVec.size() , another.myVec.size());
+        for(int i = 0 ; i< minimum ; i++){
 
-class Animal {
-    // returns a number, in percentage, between 0 and 100 
-    int Similarity(Animal other) {
-        return 0;
-    }
-    // produces a new animal similar to this and the given one
-    Animal Produce(Animal other){
-        return other;
-    }
-    // overrides cell's cell_death method
-    void cell_death(){
+            if (myVec[i].DNA1 == another.myVec[i].DNA1 && myVec[i].DNA2 == another.myVec[i].DNA2 ){
+                similar_chromosomes++;
+            }
+        }
+        return (similar_chromosomes/maximum) *100;
     }
 
+    bool operator==(Animal& animal){
+        if(myVec.size() == animal.myVec.size() && similarity(animal) > 70){
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
+    Animal asexual_reproduction() {
+        
+        Animal child;
+        int n = myVec.size();
+        int new_size = n * 2;
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(myVec.begin() , myVec.begin()+new_size , g);
+
+        int num =0;
+        for( int i = 0; i< new_size && num < n; i += 2){
+            
+             child.myVec.push_back(myVec[i]);
+             child.myVec.push_back(myVec[i + 1]);
+             num++;
+    }
+
+        if(similarity(child) <= 70){
+            child.myVec.clear();
+        }
+
+        return child;
+
+    }
+
+    Animal operator+(Animal& partner){
+        Animal child;
+
+        
+        Animal parent1 = asexual_reproduction();
+        Animal parent2 = partner.asexual_reproduction();
+
+        int n = myVec.size();
+        int new_size = n * 2;
+
+        
+        random_device rd;
+        mt19937 g(rd());
+        shuffle(parent1.myVec.begin(), parent1.myVec.end(), g);
+        shuffle(parent2.myVec.begin(), parent2.myVec.end(), g);
+
+        int num = 0;
+        for(int i = 0; i < new_size && num < n; i += 2){
+            child.myVec.push_back(parent1.myVec[i]);
+            child.myVec.push_back(parent2.myVec[i + 1]);
+            num++;
+        }
+
+
+        if(similarity(child) <= 70){
+            child.myVec.clear();
+        }
+
+        return child;
+
+    }
+
+    void cell_death() {
+        for(int i = 0; i < myVec.size() ; i++) {
+            string str = myVec[i].DNA1 +  myVec[i].DNA2; 
+
+            size_t finder1 = str.find('A');
+            size_t finder2 = str.find('T');
+            size_t finder3 = str.find('C');
+            size_t finder4 = str.find('G');
+
+            int counter1 = 0;
+            int counter2 = 0;
+
+            while(finder1 != string::npos && finder2 != string::npos) {
+                
+                finder1 = str.find('A', finder1+1);
+                finder2 = str.find('T', finder2+1);
+
+                counter1++;
+            }
+
+            while(finder3 != string::npos && finder4 != string::npos) {
+                
+                finder3 = str.find('C', finder3+1);
+                finder4 = str.find('G', finder4+1);
+
+                counter2++;
+            }
+
+            if(counter1 > (counter2 * 3)) {
+               
+                myVec.erase(myVec.begin() + i);
+                break;
+            }
+        }
+    }
 };
 
 
 
 
 
+
+
+
 int main(){
-    // use the given classes to create an acceptable menu 
-    // this menu shoud:
-    // 1. create a new genome and allows us to run genome's methods
-    // 2. create a new cell and run cell's methods
-    // 3. create a new animal and runs the animals methods
 
     vector<Genome> genomes;
     // add dummy data for ease of testing
