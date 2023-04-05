@@ -1,4 +1,3 @@
-
 #include <iostream>
 #include <vector>
 #include <algorithm>
@@ -306,19 +305,12 @@ class Cell{
 
     
     void diverse_jump(string s, int n){
-
-        if(myVec[n].DNA1.find(s) != string :: npos){
-
-            myVec[n].mokamel(s);
+        size_t pos = myVec[n].DNA1.find(s);
+        if(pos != string :: npos){
+            string mok = myVec[n].mokamel(s);
+            myVec[n].DNA1.replace(pos,s.length(),mok);
+            myVec[n].DNA2.replace(pos,s.length(),s);
         }
-        
-        if(myVec[n].DNA2.find(s) != string :: npos){
-
-            myVec[n].mokamel(s);
-        }
-
-        myVec[n].correctDNA();
-
     }
 
 
@@ -361,24 +353,30 @@ class Cell{
 
     void find_palindrome(Genome chromosome){
         substringPalindrome(chromosome.DNA1);
-        substringPalindrome(chromosome.DNA2);
+    }
+
+    void print() {
+        cout << "cell's content:" << endl;
+        for(int i = 0 ; i < myVec.size();i++)
+            cout << myVec[i].DNA1 << " | " << myVec[i].DNA2 << endl;
     }
 
  };
 
 class Animal : public Cell{
+
+    public:
     
     double similarity(Animal& another){
         int similar_chromosomes = 0;
         int maximum = max(myVec.size() , another.myVec.size());
         int minimum = min(myVec.size() , another.myVec.size());
         for(int i = 0 ; i< minimum ; i++){
-
             if (myVec[i].DNA1 == another.myVec[i].DNA1 && myVec[i].DNA2 == another.myVec[i].DNA2 ){
                 similar_chromosomes++;
             }
         }
-        return (similar_chromosomes/maximum) *100;
+        return (similar_chromosomes  *100 /maximum);
     }
 
     bool operator==(Animal& animal){
@@ -406,7 +404,7 @@ class Animal : public Cell{
              child.myVec.push_back(myVec[i]);
              child.myVec.push_back(myVec[i + 1]);
              num++;
-    }
+        }
 
         if(similarity(child) <= 70){
             child.myVec.clear();
@@ -495,13 +493,43 @@ class Animal : public Cell{
 int main(){
 
     vector<Genome> genomes;
+    vector<Cell> cells;
+    vector<Animal> animals;
+
     // add dummy data for ease of testing
     Genome g1("AAATTT","TTTAAA","AAATTT");
     Genome g2("CGCGCA","GCGCGT","CGCGCA");
+    Genome g3("CGCGCC","GCGCGC","CGCGCG");
     genomes.push_back(g1);
     genomes.push_back(g2);
     
-    vector<Cell> cells;
+    Cell c1;
+    c1.push(g1);
+    c1.push(g2);
+    Cell c2;
+    c2.push(g1);
+    c2.push(g3);
+    cells.push_back(c1);
+    cells.push_back(c2);
+
+    Animal a1;
+    a1.push(g1);
+    a1.push(g1);
+    a1.push(g1);
+    a1.push(g1);
+    a1.push(g3);
+    Animal a2;
+    a2.push(g1);
+    a2.push(g1);
+    a2.push(g1);
+    a2.push(g1);
+    a2.push(g2); // Animal1 and animal2 have 80 percent similarity.
+    Animal a3;
+    a3.push(g1);
+    a3.push(g3);
+    animals.push_back(a1);
+    animals.push_back(a2);
+    animals.push_back(a3); // the 0th and the 2th index are the same and you'll get true if you check them with ==
 
     while(true){
         int type;
@@ -689,6 +717,7 @@ int main(){
 
 
                 cells[cellindex].replaceChar(chartoreplace,charreplacement,n,m);
+                cells[cellindex].print();
 
 
             }
@@ -700,12 +729,13 @@ int main(){
                 cin >> cellindex;
 
                 cout <<"enter sth that you wanna inverse it: " << endl;
-                getline(cin,s);
+                cin >> s;
                 cout <<"enter the number of chromosome: " << endl;
                 cin >> n;
 
 
                 cells[cellindex].diverse_jump(s,n);
+                cells[cellindex].print();
 
             }
 
@@ -715,10 +745,52 @@ int main(){
                 cin >> cellindex;
                 cout <<  "which chromosome? enter a number from 0 to " << genomes.size()-1 <<  endl;
                 cin >> genomeindex;
+                cout << "Palindromes are : " << endl;
                 cells[cellindex].find_palindrome(cells[cellindex].myVec[genomeindex]);
-
             }
 
+        }
+
+        if (type == 3) {
+            int _action;
+            cout << "what do you want to do?"<< endl;
+            
+            cout << "1) genetics similarity" << endl;
+            cout << "2) check whether two animals are the same ( with == )" << endl;
+            cout << "3) for an asexual reproduction of an animal" << endl;
+            cin >> _action;
+
+            if (_action == 1) {
+                int c1Index, c2Index;
+                cout << "Enter the first animal's index:" << endl;
+                cin >> c1Index;
+                cout << "Enter the second animal's index:" << endl;
+                cin >> c2Index;
+                cout << "The similarity is " << animals[c1Index].similarity(animals[c2Index]) << endl;
+            }
+
+            if (_action == 2) {
+                int c1Index, c2Index;
+                cout << "Enter the first animal's index:" << endl;
+                cin >> c1Index;
+                cout << "Enter the second animal's index:" << endl;
+                cin >> c2Index;
+                if (animals[c2Index] == animals[c1Index]) {
+                    cout << "They are the same!" << endl;
+                }else{
+                    cout << "They're not the same!" << endl;
+                }
+            }
+
+             if (_action == 3) {
+                int c1Index;
+                cout << "Enter the animal's index:" << endl;
+                cin >> c1Index;
+                Animal baby = animals[c1Index].asexual_reproduction();
+                cout << "The baby:" << endl;
+                baby.print();
+            
+            }
         }
 
 
