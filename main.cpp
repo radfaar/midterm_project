@@ -1,494 +1,11 @@
+
 #include <iostream>
 #include <vector>
 #include <algorithm>
 #include <random>
+#include "animal.h"
 
 using namespace std;
-
-class Genome{
-public:
-    string DNA1;
-    string DNA2;
-    string RNA;
-
-    Genome(string _DNA1,string _DNA2, string _RNA){
-        DNA1 = _DNA1;
-        DNA2 = _DNA2;
-        RNA = _RNA;
-    }
-
-    Genome(){}
-
-    //recieving RNA
-    void getRNA(){
-        cout << RNA << endl;
-    }
-    //recieving DNA in 2 lines
-    void getDNA(){
-        
-        cout << DNA1 << endl;
-        cout<<  DNA2 << endl;
-       
-    }
-
-    void print() {
-        cout << "RNA: "<< endl;
-        getRNA();
-        cout<< "_____" <<endl;
-        cout << "DNA :" << endl;
-        getDNA();
-        cout<< "_____" <<endl;
-    }
-
-    //RNA or DNA supplement
-    string mokamel(string RNA){
-        string RNA__ = "";
-        for(int i = 0; i < RNA.size(); i++){
-            if(RNA[i] == 'A'){
-                RNA__ += 'T';
-            }
-            else if(RNA[i] == 'T'){
-                RNA__ += 'A';
-            }
-            else if(RNA[i] == 'C'){
-                RNA__ += 'G';
-            }
-            else if(RNA[i] == 'G'){
-                RNA__ += 'C';
-            }
-        }
-        return RNA__;
-    }
-
-    //used to correct DNA after replacements
-    void correctDNA(){
-        
-        for(int i=0; i<DNA1.size(); i++){
-            if(DNA1[i] == 'A'){
-                DNA2[i] = 'T';
-            }
-            else if(DNA1[i] == 'T'){
-                DNA2[i] = 'A';
-            }
-            else if(DNA1[i] == 'C'){
-                DNA2[i] = 'G';
-            }
-            else if(DNA1[i] == 'G'){
-                DNA2[i] = 'C';
-            }
-        }
-        
-      
-        for(int i=0; i<DNA2.size(); i++){
-            if(DNA2[i] == 'A'){
-                DNA1[i] = 'T';
-            }
-            else if(DNA2[i] == 'T'){
-                DNA1[i] = 'A';
-            }
-            else if(DNA2[i] == 'C'){
-                DNA1[i] = 'G';
-            }
-            else if(DNA2[i] == 'G'){
-                DNA1[i] = 'C';
-            }
-        }
-    }
-
-
-    //making DNA from RNA
-    string makeDNA(string _RNA){
-        string DNA__ = "";
-        for(int i = 0; i < _RNA.size(); i++){
-            if(_RNA[i] == 'A'){
-                DNA__ += 'T';
-            }
-            else if(_RNA[i] == 'T'){
-                DNA__ += 'A';
-            }
-            else if(_RNA[i] == 'C'){
-                DNA__ += 'G';
-            }
-            else if(_RNA[i] == 'G'){
-                DNA__ += 'C';
-            }
-        }
-
-        return DNA__ + "\n" + mokamel(DNA__);
-    }
-
-
-    //making a change by replacing n characters with another one
-     void replaceChar(char charToReplace, char charReplacement, int n){
-        
-        int counter=0;
-        for(int i = 0; i < DNA1.size(); i++){
-           
-            if(DNA1[i] == charToReplace){
-                DNA1[i] = charReplacement;
-                counter++;
-            }
-            if(counter == n){
-                break;
-            }
-            
-        }
-
-        cout << "Debug" << DNA1 << endl;
-        correctDNA();
-            
-          
-
-        counter=0;
-        for(int i = 0; i < RNA.size(); i++){
-            
-            if(RNA[i] == charToReplace){
-                RNA[i] = charReplacement;
-                counter++;
-                if(counter == n){
-                    break;
-                }
-            }
-        }
-
-
-     }
-    
-
-     void hugejump(string stringtofind, string stringtoreplace){
-
-        
-
-        if(RNA.find(stringtofind)!= string::npos){
-            RNA.replace(RNA.find(stringtofind), stringtofind.length(), stringtoreplace);
-        }
-
-
-        if(DNA1.find(stringtofind) != string::npos) {
-             DNA1.replace(DNA1.find(stringtofind), stringtofind.length(), stringtoreplace);
-        }
-
-        if(DNA2.find(stringtofind) != string::npos) {
-             DNA2.replace(DNA2.find(stringtofind), stringtofind.length(), stringtoreplace);
-        }
-
-        correctDNA();
-
-     }
-
-
-    void diverse_jump(string s1){
-        size_t in_rna = RNA.find(s1);
-        if(in_rna != string::npos){
-            RNA.replace(in_rna,s1.length(), mokamel(s1));
-        }
-
-        size_t in_dna = DNA1.find(s1);
-        if(in_dna != string::npos){
-            DNA1.replace(in_dna,s1.length(), mokamel(s1));
-        }
-
-        correctDNA();
-
-    }
-    
-
-
-    friend class cell;
-
-    };
-
-
-
-class Cell{
-    public:
-    
-    vector <Genome> myVec;
-    int counter=0;
-
-
-    void push(Genome chr) {
-        myVec.push_back(chr);
-    }
-
-    void number_of_chromosomes(){
-        for(int i = 0 ; i< myVec.size() ; i++){
-            if(myVec[i].DNA1!= " " && myVec[i].DNA2!= ""){
-                counter++;
-                
-            }
-        }
-        cout<< counter;
-    }
-
-
-    void cell_death(){
-      
-        for(int i = 0; i < myVec.size() ; i++){
-
-       string str= myVec[i].DNA1 +  myVec[i].DNA2; 
-
-       size_t finder1= str.find('A');
-       size_t finder2= str.find('T');
-       size_t finder3= str.find('C');
-       size_t finder4= str.find('G');
-
-       int counter1=0;
-       int counter2=0;
-
-         while(finder1 != string::npos && finder2 != string::npos) {
-                
-                finder1 = str.find('A', finder1+1);
-                finder2 = str.find('T', finder2+1);
-
-                counter1++;
-            }
-
-         while(finder3 != string::npos && finder4 != string::npos) {
-                
-                finder3 = str.find('C', finder3+1);
-                finder4 = str.find('G', finder4+1);
-
-                counter2++;
-            }
-
-       if(counter1 > (counter2 *3)){
-        delete this;
-       }
-
-        break;
-       }
-    }
-
-    void hugeJump(string s1 , int n, string s2, int m){
-        size_t  indexN = myVec[n].DNA1.find(s1);
-        size_t  indexM = myVec[m].DNA1.find(s2);
-
-        if(indexM == std::string::npos || indexN == std::string::npos)
-            return;
-        
-        myVec[n].DNA1.replace(indexN,s1.length(),s2);
-        myVec[m].DNA1.replace(indexM,s2.length(),s1);
-
-        string ms1 = myVec[n].mokamel(s1);
-        string ms2 = myVec[m].mokamel(s2);
-
-      myVec[n].DNA2.replace(indexN,s1.length(),ms2);
-      myVec[m].DNA2.replace(indexM,s2.length(),ms1);
-
-      myVec[n].getDNA();
-      myVec[m].getDNA();
-        
-
-
-    }
-
-
-    void replaceChar(char charToReplace, char charReplacement, int n,int m){
-
-        int counter=0;
-        for(int i = 0; i< myVec.size(); i++){
-           for(int j=0 ;j < myVec[m].DNA1[i] ; j++ ){
-            if(myVec[m].DNA1[i] == charToReplace){
-                myVec[m].DNA1[i] = charReplacement;
-                counter++;
-                }
-
-                if(counter == n){
-                    break;
-                }
-            
-            }}
-            myVec[m].correctDNA();
-
-    }
-
-    
-    void diverse_jump(string s, int n){
-        size_t pos = myVec[n].DNA1.find(s);
-        if(pos != string :: npos){
-            string mok = myVec[n].mokamel(s);
-            myVec[n].DNA1.replace(pos,s.length(),mok);
-            myVec[n].DNA2.replace(pos,s.length(),s);
-        }
-    }
-
-
-    bool isPalindrome(string str){ 
-        if(str.length() <= 2 || (str.length() % 2) != 0) { 
-            return false; 
-        } 
-        for(int i = 0 ; i < str.length()/2; i++) { 
-            char curr = str[i]; 
-            char mokamel = 'T'; 
-    
-            if(curr == 'A') 
-                mokamel = 'T'; 
-            if(curr == 'T') 
-                mokamel = 'A'; 
-    
-            if(curr == 'G') 
-                mokamel = 'C'; 
-            if(curr == 'C') 
-                mokamel = 'G'; 
-            
-            if(str[str.length()-1-i] != mokamel){ 
-                return false; 
-            } 
-        } 
-        return true; 
-    }
-
-    void substringPalindrome(string a) { 
-        for(int i = 0 ; i < a.length(); i++){ 
-            for(int j = i; j < a.length(); j++){ 
-                string sub = a.substr(i,j-i+1); 
-                if(isPalindrome(sub)){ 
-                    cout << sub << endl; 
-                } 
-            } 
-        } 
-    }
-
-
-    void find_palindrome(Genome chromosome){
-        substringPalindrome(chromosome.DNA1);
-    }
-
-    void print() {
-        cout << "cell's content:" << endl;
-        for(int i = 0 ; i < myVec.size();i++)
-            cout << myVec[i].DNA1 << " | " << myVec[i].DNA2 << endl;
-    }
-
- };
-
-class Animal : public Cell{
-
-    public:
-    
-    double similarity(Animal& another){
-        int similar_chromosomes = 0;
-        int maximum = max(myVec.size() , another.myVec.size());
-        int minimum = min(myVec.size() , another.myVec.size());
-        for(int i = 0 ; i< minimum ; i++){
-            if (myVec[i].DNA1 == another.myVec[i].DNA1 && myVec[i].DNA2 == another.myVec[i].DNA2 ){
-                similar_chromosomes++;
-            }
-        }
-        return (similar_chromosomes  *100 /maximum);
-    }
-
-    bool operator==(Animal& animal){
-        if(myVec.size() == animal.myVec.size() && similarity(animal) > 70){
-            return true;
-        }
-        else{
-            return false;
-        }
-
-    }
-
-    Animal asexual_reproduction() {
-        
-        Animal child;
-        int n = myVec.size();
-        int new_size = n * 2;
-        random_device rd;
-        mt19937 g(rd());
-        shuffle(myVec.begin() , myVec.begin()+new_size , g);
-
-        int num =0;
-        for( int i = 0; i< new_size && num < n; i += 2){
-            
-             child.myVec.push_back(myVec[i]);
-             child.myVec.push_back(myVec[i + 1]);
-             num++;
-        }
-
-        if(similarity(child) <= 70){
-            child.myVec.clear();
-        }
-
-        return child;
-
-    }
-
-    Animal operator+(Animal& partner){
-        Animal child;
-
-        
-        Animal parent1 = asexual_reproduction();
-        Animal parent2 = partner.asexual_reproduction();
-
-        int n = myVec.size();
-        int new_size = n * 2;
-
-        
-        random_device rd;
-        mt19937 g(rd());
-        shuffle(parent1.myVec.begin(), parent1.myVec.end(), g);
-        shuffle(parent2.myVec.begin(), parent2.myVec.end(), g);
-
-        int num = 0;
-        for(int i = 0; i < new_size && num < n; i += 2){
-            child.myVec.push_back(parent1.myVec[i]);
-            child.myVec.push_back(parent2.myVec[i + 1]);
-            num++;
-        }
-
-
-        if(similarity(child) <= 70){
-            child.myVec.clear();
-        }
-
-        return child;
-
-    }
-
-    void cell_death() {
-        for(int i = 0; i < myVec.size() ; i++) {
-            string str = myVec[i].DNA1 +  myVec[i].DNA2; 
-
-            size_t finder1 = str.find('A');
-            size_t finder2 = str.find('T');
-            size_t finder3 = str.find('C');
-            size_t finder4 = str.find('G');
-
-            int counter1 = 0;
-            int counter2 = 0;
-
-            while(finder1 != string::npos && finder2 != string::npos) {
-                
-                finder1 = str.find('A', finder1+1);
-                finder2 = str.find('T', finder2+1);
-
-                counter1++;
-            }
-
-            while(finder3 != string::npos && finder4 != string::npos) {
-                
-                finder3 = str.find('C', finder3+1);
-                finder4 = str.find('G', finder4+1);
-
-                counter2++;
-            }
-
-            if(counter1 > (counter2 * 3)) {
-               
-                myVec.erase(myVec.begin() + i);
-                break;
-            }
-        }
-    }
-};
-
-
-
-
-
-
-
 
 int main(){
 
@@ -527,9 +44,29 @@ int main(){
     Animal a3;
     a3.push(g1);
     a3.push(g3);
+    a3.push(g2);
+    a3.push(g3);
+    a3.push(g2);
+    a3.push(g1);
+    a3.push(g1);
+    a3.push(g2);
+    a3.push(g3);
+    a3.push(g3);
+    Animal a4;
+    a4.push(g2);
+    a4.push(g2);
+    a4.push(g2);
+    a4.push(g3);
+    a4.push(g1);
+    a4.push(g1);
+    a4.push(g1);
+    a4.push(g3);
+    a4.push(g2);
+    a4.push(g1);
     animals.push_back(a1);
     animals.push_back(a2);
-    animals.push_back(a3); // the 0th and the 2th index are the same and you'll get true if you check them with ==
+    animals.push_back(a3); 
+    animals.push_back(a4);
 
     while(true){
         int type;
@@ -758,6 +295,7 @@ int main(){
             cout << "1) genetics similarity" << endl;
             cout << "2) check whether two animals are the same ( with == )" << endl;
             cout << "3) for an asexual reproduction of an animal" << endl;
+            cout << "4) for sexual reproduction of two animals" << endl;
             cin >> _action;
 
             if (_action == 1) {
@@ -782,14 +320,28 @@ int main(){
                 }
             }
 
-             if (_action == 3) {
+            if (_action == 3) {
                 int c1Index;
                 cout << "Enter the animal's index:" << endl;
                 cin >> c1Index;
                 Animal baby = animals[c1Index].asexual_reproduction();
                 cout << "The baby:" << endl;
                 baby.print();
+                animals.push_back(baby);
+                cout << "The baby's index is: " << animals.size() -1 << endl;
             
+            }
+            if (_action == 4) {
+                int c1Index, c2Index;
+                cout << "Enter the first animal's index:" << endl;
+                cin >> c1Index;
+                cout << "Enter the second animal's index:" << endl;
+                cin >> c2Index;
+                Animal baby = animals[c1Index] + animals[c2Index];
+                cout << "The baby:" << endl;
+                baby.print();
+                animals.push_back(baby);
+                cout << "The baby's index is: " << animals.size() -1 << endl;
             }
         }
 
